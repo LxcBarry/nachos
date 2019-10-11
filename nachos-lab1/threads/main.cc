@@ -9,22 +9,22 @@
 // 	Most of this file is not needed until later assignments.
 //
 // Usage: nachos -d <debugflags> -rs <random seed #>
-//		-s -x <nachos file> -c <consoleIn> <consoleOut>
-//		-f -cp <unix file> <nachos file>
-//		-p <nachos file> -r <nachos file> -l -D -t
+// 		-s -x <nachos file> -c <consoleIn> <consoleOut>
+// 		-f -cp <unix file> <nachos file>
+// 		-p <nachos file> -r <nachos file> -l -D -t
 //              -n <network reliability> -m <machine id>
 //              -o <other machine id>
 //              -z
-//
+
 //    -d causes certain debugging messages to be printed (cf. utility.h)
 //    -rs causes Yield to occur at random (but repeatable) spots
 //    -z prints the copyright message
-//
+
 //  USER_PROGRAM
 //    -s causes user programs to be executed in single-step mode
 //    -x runs a user program
 //    -c tests the console
-//
+
 //  FILESYS
 //    -f causes the physical disk to be formatted
 //    -cp copies a file from UNIX to Nachos
@@ -33,7 +33,7 @@
 //    -l lists the contents of the Nachos directory
 //    -D prints the contents of the entire file system 
 //    -t tests the performance of the Nachos file system
-//
+
 //  NETWORK
 //    -n sets the network reliability
 //    -m sets this machine's host id (needed for the network)
@@ -52,9 +52,12 @@
 
 #include "utility.h"
 #include "system.h"
+#include "dllist.h"
 
 #ifdef THREADS
 extern int testnum;
+extern int T;
+extern int N;
 #endif
 
 // External functions used by this file
@@ -87,6 +90,9 @@ main(int argc, char **argv)
     DEBUG('t', "Entering main");
     (void) Initialize(argc, argv);
     
+    //RandomInit(10);
+    //DLList *list=new DLList;
+
 #ifdef THREADS
     for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount) {
       argCount = 1;
@@ -95,6 +101,12 @@ main(int argc, char **argv)
         testnum = atoi(argv[1]);
         argCount++;
         break;
+      case 'm':
+    	testnum = 2;
+    	T=atoi(argv[1]);
+    	N=atoi(argv[2]);
+    	argCount+=3;
+    	break;
       default:
         testnum = 1;
         break;

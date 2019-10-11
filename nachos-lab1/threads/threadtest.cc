@@ -11,10 +11,16 @@
 
 #include "copyright.h"
 #include "system.h"
+#include "dllist.h"
 
 // testnum is set in main.cc
 int testnum = 1;
+int T=2;
+int N=2;
+DLList *	list;
 
+void InsertList(int N, DLList *list);
+void RemoveList(int N, DLList *list);
 //----------------------------------------------------------------------
 // SimpleThread
 // 	Loop 5 times, yielding the CPU to another ready thread 
@@ -24,8 +30,7 @@ int testnum = 1;
 //	purposes.
 //----------------------------------------------------------------------
 
-void
-SimpleThread(int which)
+void SimpleThread(int which)
 {
     int num;
     
@@ -35,16 +40,39 @@ SimpleThread(int which)
     }
 }
 
+void TestDllist(int which)
+{
+	//printf("*** thread %d ***\n",which);
+	InsertList(N,list);
+	// currentThread->Yield();
+	//printf("*** thread %d ***\n",which);
+	RemoveList(N,list);
+	//printf("*** thread %d ***\n",which);
+	if(list->IsEmpty())
+	{
+		printf("*** thread %d :empty ***\n",which);
+	}
+	else
+	{
+		printf("*** thread %d :not empty ***\n",which);
+	}
+	// currentThread->Finish(); // give back the space
+
+}
+
+
+
+
 //----------------------------------------------------------------------
 // ThreadTest1
 // 	Set up a ping-pong between two threads, by forking a thread 
 //	to call SimpleThread, and then calling SimpleThread ourselves.
 //----------------------------------------------------------------------
 
-void
-ThreadTest1()
+
+void ThreadTest1()
 {
-    DEBUG('t', "Entering ThreadTest1");
+    DEBUG('t', "Entering ThreadTest1 ");
 
     Thread *t = new Thread("forked thread");
 
@@ -52,18 +80,43 @@ ThreadTest1()
     SimpleThread(0);
 }
 
+void ThreadTest2()
+{
+	DEBUG('t', "Entering ThreadTest2 ");
+	list=new DLList();
+	for (int var = 0; var < T; var++)
+	{
+		char No[4]="1";
+		sprintf(No, "%d", var);
+		//char name[18]="forked thread ";	//error
+		char *name=new char[25];			//must allocate new space,or the new thread will cover the address of 'name'
+		name[0]='\0';
+		strcat(name,"forked thread ");
+		strcat(name,No);
+
+		Thread *test = new Thread(name);
+		test->Fork(TestDllist,var);//read to run this,and set the params for this procedure
+		
+	}
+
+	
+
+}
+
 //----------------------------------------------------------------------
 // ThreadTest
 // 	Invoke a test routine.
 //----------------------------------------------------------------------
 
-void
-ThreadTest()
+void ThreadTest()
 {
     switch (testnum) {
     case 1:
 	ThreadTest1();
 	break;
+    case 2:
+    ThreadTest2();
+    break;
     default:
 	printf("No test specified.\n");
 	break;

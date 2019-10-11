@@ -25,8 +25,8 @@
 # All rights reserved.  See copyright.h for copyright notice and limitation 
 # of liability and disclaimer of warranty provisions.
 
-CFLAGS = -g -Wall -Wshadow  $(INCPATH) $(DEFINES) $(HOST) -DCHANGED 
-# CFLAGS = -g -Wall -Wshadow -traditional $(INCPATH) $(DEFINES) $(HOST) -DCHANGED 
+# CFLAGS = -g -Wall -Wshadow -fwritable-strings $(INCPATH) $(DEFINES) $(HOST) -DCHANGED 
+CFLAGS = -g -Wall -Wshadow -traditional $(INCPATH) $(DEFINES) $(HOST) -DCHANGED 
 
 # These definitions may change as the software is updated.
 # Some of them are also system dependent
@@ -45,6 +45,7 @@ THREAD_H =../threads/copyright.h\
 	../threads/system.h\
 	../threads/thread.h\
 	../threads/utility.h\
+	../threads/dllist.h\
 	../machine/interrupt.h\
 	../machine/sysdep.h\
 	../machine/stats.h\
@@ -59,6 +60,8 @@ THREAD_C =../threads/main.cc\
 	../threads/thread.cc\
 	../threads/utility.cc\
 	../threads/threadtest.cc\
+	../threads/dllist.cc\
+	../threads/dllist-driver.cc\
 	../machine/interrupt.cc\
 	../machine/sysdep.cc\
 	../machine/stats.cc\
@@ -67,7 +70,7 @@ THREAD_C =../threads/main.cc\
 THREAD_S = ../threads/switch.s
 
 THREAD_O =main.o list.o scheduler.o synch.o synchlist.o system.o thread.o \
-	utility.o threadtest.o interrupt.o stats.o sysdep.o timer.o
+	utility.o threadtest.o interrupt.o stats.o sysdep.o timer.o dllist.o dllist-driver.o
 
 USERPROG_H = ../userprog/addrspace.h\
 	../userprog/bitmap.h\

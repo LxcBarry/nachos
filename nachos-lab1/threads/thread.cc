@@ -69,10 +69,10 @@ Thread::~Thread()
 // 	Invoke (*func)(arg), allowing caller and callee to execute 
 //	concurrently.
 //
-//	NOTE: although our definition allows only a single integer argument
-//	to be passed to the procedure, it is possible to pass multiple
-//	arguments by making them fields of a structure, and passing a pointer
-//	to the structure as "arg".
+	// NOTE: although our definition allows only a single integer argument
+	// to be passed to the procedure, it is possible to pass multiple
+	// arguments by making them fields of a structure, and passing a pointer
+	// to the structure as "arg".
 //
 // 	Implemented as the following steps:
 //		1. Allocate a stack
