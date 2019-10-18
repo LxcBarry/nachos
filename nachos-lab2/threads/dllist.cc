@@ -22,6 +22,14 @@ DLList::DLList()
 
 DLList::~DLList()
 {
+    DLLElement *it = first;
+    while(it)
+    {
+        DLLElement *tmp = it->next;
+        delete it;
+        it = tmp;
+
+    }
 
 }
 

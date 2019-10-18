@@ -56,7 +56,7 @@ void TestDllist(int which)
 	{
 		printf("*** thread %d :not empty ***\n",which);
 	}
-	// currentThread->Finish(); // give back the space
+	currentThread->Finish(); // give back the space
 
 }
 
@@ -96,7 +96,6 @@ void ThreadTest2()
 
 		Thread *test = new Thread(name);
 		test->Fork(TestDllist,var);//read to run this,and set the params for this procedure
-		
 	}
 
 	
