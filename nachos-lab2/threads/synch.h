@@ -78,8 +78,9 @@ class Lock {
 					// Condition variable ops below.
 
   private:
-    char* name;				// for debugging
+    char* debug_name;				// for debugging
     Thread * LockHolder;
+    Semaphore* sem;
     List * LockQueue;
     // plus some other stuff you'll need to define
 };
