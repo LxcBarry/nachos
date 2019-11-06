@@ -79,7 +79,7 @@ class Lock {
 
   private:
     char* name;				// for debugging
-    Thread * LockHolder;
+    Thread *LockHolder;
     // Semaphore* sem;
     int value; //method1 sleep
     List * LockQueue;
@@ -132,9 +132,12 @@ class Condition {
     void Signal(Lock *conditionLock);   // conditionLock must be held by
     void Broadcast(Lock *conditionLock);// the currentThread for all of 
 					// these operations
-
   private:
     char* name;
+    // Lock * lock;
+    int numWaiting;
+    List * queue;
+    Thread * holder;
     // plus some other stuff you'll need to define
 };
 #endif // SYNCH_H
