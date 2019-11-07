@@ -135,7 +135,6 @@ class Condition {
     // Lock * lock;
     int numWaiting;
     List * queue;
-    Semaphore *sem;
     Thread * holder;
     // plus some other stuff you'll need to define
 };
