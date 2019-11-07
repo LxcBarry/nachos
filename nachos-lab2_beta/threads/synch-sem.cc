@@ -104,42 +104,21 @@ Semaphore::V()
 //binary lock
 Lock::Lock(char* debugName){
     name=debugName;
-    value = 1; //value=0--lock is busy value=1--lock is avilable
-    LockQueue = new List;
+    sem=new Semaphore("lock sem...\n",1);
     LockHolder = NULL;
 }
 Lock::~Lock() {
-    delete (LockQueue);
+    delete (sem);
+
 }
 void Lock::Acquire() {
-    IntStatus oldLevel=interrupt->SetLevel(IntOff);
-    while (!value)
-    {
-        LockQueue->Append((void*)currentThread);
-        currentThread->Sleep();
-    }
-    value=0;
-    LockHolder=currentThread;
-
-    (void)interrupt->SetLevel(oldLevel);    
-
+   sem->P();
+   LockHolder=currentThread;
 }
 void Lock::Release() {
-    Thread* t;
     ASSERT(isHeldByCurrentThread());
-    IntStatus oldLevel=interrupt->SetLevel(IntOff);
-
-    if(!LockQueue->IsEmpty()){
-        t=(Thread*)LockQueue->Remove();
-        if(t) scheduler->ReadyToRun(t);
-    }
-    else{
-        value=1;
-
-    }
     LockHolder=NULL;
-    
-    (void)interrupt->SetLevel(oldLevel);
+    sem->V();
 }
 
 bool Lock::isHeldByCurrentThread(){
@@ -151,47 +130,53 @@ Condition::Condition(char* debugName) {
     // lock = new Lock("condition lock");
     numWaiting = 0;
     queue = new List;
+    sem = new Semaphore("condition sem...\n",0);
     holder = NULL;
 }
 Condition::~Condition() {
     delete (queue);
+    delete (sem);
     // delete (lock);
  }
 void Condition::Wait(Lock* conditionLock) { 
     ASSERT(conditionLock->isHeldByCurrentThread()); 
-    IntStatus oldLevel=interrupt->SetLevel(IntOff);
+    // IntStatus oldLevel=interrupt->SetLevel(IntOff);
     DEBUG('s',"condition waiting...\n");
     numWaiting++;
-    queue->Append((void*)currentThread);
+    // queue->Append((void*)currentThread); use sem
     conditionLock->Release();
     // go to sleep
-    currentThread->Sleep();
+    // currentThread->Sleep();
+    sem->P();
     DEBUG('s',"condition wakeup...\n");
     conditionLock->Acquire();
-    (void)interrupt->SetLevel(oldLevel);
+    // (void)interrupt->SetLevel(oldLevel);
 }
 void Condition::Signal(Lock* conditionLock) {
     ASSERT(conditionLock->isHeldByCurrentThread()); 
-    IntStatus oldLevel=interrupt->SetLevel(IntOff);
+    // IntStatus oldLevel=interrupt->SetLevel(IntOff);
     DEBUG('s',"condition signal...\n");
     if(numWaiting > 0){
-        Thread *t = (Thread*)queue->Remove();
-        if(t) scheduler->ReadyToRun(t);
+        // Thread *t = (Thread*)queue->Remove();
+        // if(t) scheduler->ReadyToRun(t);
+        sem->V();
         numWaiting--;
     }
-    (void)interrupt->SetLevel(oldLevel);
+    // (void)interrupt->SetLevel(oldLevel);
  }
 
 void Condition::Broadcast(Lock* conditionLock) { 
     ASSERT(conditionLock->isHeldByCurrentThread());
-    IntStatus oldLevel=interrupt->SetLevel(IntOff);
-    DEBUG('s',"condition broadcase");
-    Thread *t=NULL;
-    t=(Thread*)queue->Remove();
-    while(t){
-        scheduler->ReadyToRun(t);
-        t=(Thread*)queue->Remove();
+    // IntStatus oldLevel=interrupt->SetLevel(IntOff);
+    DEBUG('s',"condition broadcast...\n");
+    // Thread *t=NULL;
+    // t=(Thread*)queue->Remove();
+    while(numWaiting){
+        // scheduler->ReadyToRun(t);
+        // t=(Thread*)queue->Remove();
+        sem->V();
+        numWaiting--;
     }
-    numWaiting=0;
-    (void)interrupt->SetLevel(oldLevel);
+    
+    // (void)interrupt->SetLevel(oldLevel);
 }
