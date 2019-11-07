@@ -12,12 +12,18 @@
 #include "copyright.h"
 #include "system.h"
 #include "dllist.h"
+#include "synch-sleep.h"
+// #include "synch-sem.h"
 
 // testnum is set in main.cc
 int testnum = 1;
 int T=2;
 int N=2;
 DLList *	list;
+
+// sleep lock
+Lock * sleep_lock;
+
 
 void InsertList(int N, DLList *list);
 void RemoveList(int N, DLList *list);
@@ -43,19 +49,19 @@ void SimpleThread(int which)
 void TestDllist(int which)
 {
 	//printf("*** thread %d ***\n",which);
+	// DEBUG('s', "use lock...\n");
+	sleep_lock->Acquire();
 	InsertList(N,list);
-	// currentThread->Yield();
-	//printf("*** thread %d ***\n",which);
+	currentThread->Yield();
 	RemoveList(N,list);
+	sleep_lock->Release();
 	//printf("*** thread %d ***\n",which);
 	if(list->IsEmpty())
 	{
 		printf("*** thread %d :empty ***\n",which);
 	}
-	else
-	{
-		printf("*** thread %d :not empty ***\n",which);
-	}
+
+	
 	currentThread->Finish(); // give back the space
 
 }
@@ -84,6 +90,7 @@ void ThreadTest2()
 {
 	DEBUG('t', "Entering ThreadTest2 ");
 	list=new DLList();
+	sleep_lock=new Lock("sleep lock");
 	for (int var = 0; var < T; var++)
 	{
 		char No[4]="1";

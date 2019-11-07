@@ -112,11 +112,13 @@ Lock::~Lock() {
 
 }
 void Lock::Acquire() {
+    DEBUG('s',"lock acquire...\n");
    sem->P();
    LockHolder=currentThread;
 }
 void Lock::Release() {
     ASSERT(isHeldByCurrentThread());
+    DEBUG('s',"lock release...\n");
     LockHolder=NULL;
     sem->V();
 }

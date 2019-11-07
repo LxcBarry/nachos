@@ -49,6 +49,9 @@
 #define MAIN
 #include "copyright.h"
 #undef MAIN
+#ifndef THREADS
+#define THREADS
+#endif // !THREADS
 
 #include "utility.h"
 #include "system.h"

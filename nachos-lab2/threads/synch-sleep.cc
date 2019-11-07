@@ -103,16 +103,19 @@ Semaphore::V()
 
 //binary lock
 Lock::Lock(char* debugName){
+    DEBUG('s', "lock init...\n");
     name=debugName;
     value = 1; //value=0--lock is busy value=1--lock is avilable
     LockQueue = new List;
     LockHolder = NULL;
 }
 Lock::~Lock() {
+    DEBUG('s',"lock delete...\n");
     delete (LockQueue);
 }
 void Lock::Acquire() {
     IntStatus oldLevel=interrupt->SetLevel(IntOff);
+    DEBUG('s',"lock acquire...\n");
     while (!value)
     {
         LockQueue->Append((void*)currentThread);
@@ -129,14 +132,13 @@ void Lock::Release() {
     ASSERT(isHeldByCurrentThread());
     IntStatus oldLevel=interrupt->SetLevel(IntOff);
 
-    if(!LockQueue->IsEmpty()){
+    DEBUG('s',"lock release...\n");
+    if(LockQueue->IsEmpty()==FALSE){
         t=(Thread*)LockQueue->Remove();
-        if(t) scheduler->ReadyToRun(t);
+        if(t != NULL) scheduler->ReadyToRun(t);
     }
-    else{
-        value=1;
 
-    }
+    value=1;
     LockHolder=NULL;
     
     (void)interrupt->SetLevel(oldLevel);
@@ -176,7 +178,7 @@ void Condition::Signal(Lock* conditionLock) {
     DEBUG('s',"condition signal...\n");
     if(numWaiting > 0){
         Thread *t = (Thread*)queue->Remove();
-        if(t) scheduler->ReadyToRun(t);
+        if(t != NULL) scheduler->ReadyToRun(t);
         numWaiting--;
     }
     (void)interrupt->SetLevel(oldLevel);
@@ -188,7 +190,7 @@ void Condition::Broadcast(Lock* conditionLock) {
     DEBUG('s',"condition broadcase");
     Thread *t=NULL;
     t=(Thread*)queue->Remove();
-    while(t){
+    while(t != NULL){
         scheduler->ReadyToRun(t);
         t=(Thread*)queue->Remove();
     }

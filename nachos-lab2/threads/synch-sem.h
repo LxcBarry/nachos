@@ -134,6 +134,7 @@ class Condition {
     char* name;
     // Lock * lock;
     int numWaiting;
+    Semaphore *sem;
     List * queue;
     Thread * holder;
     // plus some other stuff you'll need to define
