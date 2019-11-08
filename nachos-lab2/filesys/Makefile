@@ -206,7 +206,7 @@ threadtest.o: ../threads/threadtest.cc /usr/include/stdc-predef.h \
  ../threads/list.h ../machine/interrupt.h ../threads/list.h \
  ../machine/stats.h ../machine/timer.h ../filesys/synchdisk.h \
  ../machine/disk.h ../threads/synch.h ../threads/dllist.h \
- ../threads/synch-sem.h
+ ../threads/synch-sleep.h
 dllist.o: ../threads/dllist.cc /usr/include/stdc-predef.h \
  ../threads/dllist.h ../threads/system.h ../threads/copyright.h \
  ../threads/utility.h ../threads/bool.h ../machine/sysdep.h \

@@ -61,6 +61,7 @@
 extern int testnum;
 extern int T;
 extern int N;
+extern int E;
 #endif
 
 // External functions used by this file
@@ -107,8 +108,14 @@ int main(int argc, char **argv)
     	testnum = 2;
     	T=atoi(argv[1]);
     	N=atoi(argv[2]);
-    	argCount+=3;
+		// E=1;
+
+    	argCount+=2;
     	break;
+	   case 'e':
+		E=atoi(argv[1]);
+		argCount++;
+		break;
       default:
         testnum = 1;
         break;

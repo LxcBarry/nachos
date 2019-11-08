@@ -19,6 +19,7 @@
 int testnum = 1;
 int T=2;
 int N=2;
+int E=0;
 DLList *	list;
 
 // sleep lock
@@ -52,7 +53,10 @@ void TestDllist(int which)
 	// DEBUG('s', "use lock...\n");
 	sleep_lock->Acquire();
 	InsertList(N,list);
-	currentThread->Yield();
+	if(E==1){
+		//1号错误
+		currentThread->Yield();
+	}
 	RemoveList(N,list);
 	sleep_lock->Release();
 	//printf("*** thread %d ***\n",which);

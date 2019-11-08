@@ -1,6 +1,6 @@
 
 #include "dllist.h"
-
+extern int E;
 void InsertList(int N, DLList *list)
 {
 
@@ -20,6 +20,10 @@ void InsertList(int N, DLList *list)
         
         //currentThread->Yield();
         list->SortedInsert(item,key);
+        if(E==2){
+            // 2号错误
+            currentThread->Yield();
+        }
     }
     list->show();
     //find next thread to run 
@@ -36,6 +40,10 @@ void RemoveList(int N, DLList *list)
         void *item;
         item=list->Remove(&key);
         printf("%s out:%d %d\n",currentThread->getName(),key,*(int*)item);
+        if(E==3){
+            // 3号错误
+            currentThread->Yield();
+        }
         // currentThread->Yield();
     }
     list->show();
