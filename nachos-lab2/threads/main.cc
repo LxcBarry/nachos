@@ -105,10 +105,9 @@ int main(int argc, char **argv)
         argCount++;
         break;
       case 'm':
-    	testnum = 2;
+    	// testnum = 2;
     	T=atoi(argv[1]);
     	N=atoi(argv[2]);
-		// E=1;
 
     	argCount+=2;
     	break;

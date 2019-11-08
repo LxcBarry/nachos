@@ -9,6 +9,7 @@ Table::Table(int size)
 	{
 		table[i] = NULL;
 	}
+    this->size=size;
     used = 0;
 }
 
@@ -25,7 +26,7 @@ int Table::Alloc(void* object)
     tableLock->Acquire();
     int NowIndex=0;
 
-    while (table[NowIndex]!= NULL &&NowIndex < size){
+    while (table[NowIndex]!= NULL && NowIndex < size){
         NowIndex++;
     }
 
@@ -48,7 +49,7 @@ void* Table::Get(int index)
 {
     void *tmp;
     tableLock->Acquire();
-    // ASSERT(index<size);
+    ASSERT(index<size);
     if (index >= size){
 
         tmp=NULL;

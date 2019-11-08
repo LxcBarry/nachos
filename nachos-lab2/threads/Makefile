@@ -178,7 +178,7 @@ threadtest.o: ../threads/threadtest.cc /usr/include/stdc-predef.h \
  ../threads/thread.h ../threads/scheduler.h ../threads/list.h \
  ../machine/interrupt.h ../threads/list.h ../machine/stats.h \
  ../machine/timer.h ../threads/utility.h ../threads/dllist.h \
- ../threads/synch-sleep.h
+ ../threads/synch-sleep.h ../threads/Table.h ../threads/synch-sem.h
 dllist.o: ../threads/dllist.cc /usr/include/stdc-predef.h \
  ../threads/dllist.h ../threads/system.h ../threads/copyright.h \
  ../threads/utility.h ../threads/bool.h ../machine/sysdep.h \

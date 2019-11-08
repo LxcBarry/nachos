@@ -64,7 +64,7 @@ Semaphore::~Semaphore()
 void
 Semaphore::P()
 {
-
+    
     IntStatus oldLevel = interrupt->SetLevel(IntOff);	// disable interrupts
     while (value == 0) { 			// semaphore not available
 	queue->Append((void *)currentThread);	// so go to sleep
@@ -110,12 +110,16 @@ Lock::Lock(char* debugName){
     LockHolder = NULL;
 }
 Lock::~Lock() {
-    DEBUG('s',"lock delete...\n");
+    char msg[50];
+    sprintf(msg,"%s lock delete...\n",name);
+    DEBUG('s',msg);
     delete (LockQueue);
 }
 void Lock::Acquire() {
     IntStatus oldLevel=interrupt->SetLevel(IntOff);
-    DEBUG('s',"lock acquire...\n");
+    char msg[50];
+    DEBUG('s',msg);
+    sprintf(msg,"%s lock acquire...\n",name);
     while (!value)
     {
         LockQueue->Append((void*)currentThread);
@@ -131,8 +135,9 @@ void Lock::Release() {
     Thread* t;
     ASSERT(isHeldByCurrentThread());
     IntStatus oldLevel=interrupt->SetLevel(IntOff);
-
-    DEBUG('s',"lock release...\n");
+    char msg[50];
+    sprintf(msg,"%s lock release...\n",name);
+    DEBUG('s',msg);
     if(LockQueue->IsEmpty()==FALSE){
         t=(Thread*)LockQueue->Remove();
         if(t != NULL) scheduler->ReadyToRun(t);
@@ -162,20 +167,25 @@ Condition::~Condition() {
 void Condition::Wait(Lock* conditionLock) { 
     ASSERT(conditionLock->isHeldByCurrentThread()); 
     IntStatus oldLevel=interrupt->SetLevel(IntOff);
-    DEBUG('s',"condition waiting...\n");
+    char msg[50];
+    sprintf(msg,"%s cond waiting...\n",name);
+    DEBUG('s',msg);
     numWaiting++;
     queue->Append((void*)currentThread);
     conditionLock->Release();
     // go to sleep
     currentThread->Sleep();
-    DEBUG('s',"condition wakeup...\n");
+    sprintf(msg,"%s cond wakeup...\n",name);
+    DEBUG('s',msg);
     conditionLock->Acquire();
     (void)interrupt->SetLevel(oldLevel);
 }
 void Condition::Signal(Lock* conditionLock) {
     ASSERT(conditionLock->isHeldByCurrentThread()); 
     IntStatus oldLevel=interrupt->SetLevel(IntOff);
-    DEBUG('s',"condition signal...\n");
+    char msg[50];
+    sprintf(msg,"%s cond signal...\n",name);
+    DEBUG('s',msg);
     if(numWaiting > 0){
         Thread *t = (Thread*)queue->Remove();
         if(t != NULL) scheduler->ReadyToRun(t);
@@ -187,7 +197,9 @@ void Condition::Signal(Lock* conditionLock) {
 void Condition::Broadcast(Lock* conditionLock) { 
     ASSERT(conditionLock->isHeldByCurrentThread());
     IntStatus oldLevel=interrupt->SetLevel(IntOff);
-    DEBUG('s',"condition broadcase");
+    char msg[50];
+    sprintf(msg,"%s cond broadcase...\n",name);
+    DEBUG('s',msg);
     Thread *t=NULL;
     t=(Thread*)queue->Remove();
     while(t != NULL){

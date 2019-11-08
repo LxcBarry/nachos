@@ -49,8 +49,10 @@ class Table {
    private:
      // Your code here.
      int size;
-     void ***table;
+     void **table;
      int used;
      Lock *tableLock;
+     Condition *notEmpty;
+     Condition *notFull;
 };
 
