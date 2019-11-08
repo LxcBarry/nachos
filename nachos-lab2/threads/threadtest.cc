@@ -14,6 +14,7 @@
 #include "dllist.h"
 #include "synch-sleep.h"
 #include "Table.h"
+#include "BoundedBuffer.h"
 // #include "synch-sem.h"
 
 // testnum is set in main.cc
@@ -41,7 +42,11 @@ Lock * d_mutex;
 // still use list
 // still use N (as buffer max space)
 
-
+// boundedBuffer
+int b_in_size=2;
+int b_out_size=2;
+int b_maxsize=10;
+BoundedBuffer * boundbuffer;
 void InsertList(int N, DLList *list);
 void RemoveList(int N, DLList *list);
 //----------------------------------------------------------------------
@@ -181,6 +186,34 @@ void Dllist_consumer(int which)
 }
 
 
+// boundbuffer producer
+void BoundBuffer_producer(int which)
+{
+	while(TRUE)
+	{
+		//producer
+		char * data = new char[b_in_size+1]();
+		for(int i = 0; i < b_in_size; i++)
+		{
+			data[i] = Random()%26+'a';
+		}
+		boundbuffer->Write(data,b_in_size);
+		printf("%s in: %s\n",currentThread->getName(),data);
+		delete [] data; 
+	}
+}
+
+void BoundBuffer_consumer(int which)
+{
+	while(TRUE)
+	{
+		//consumer
+		char *data = new char[b_out_size+1]();
+		boundbuffer->Read(data,b_out_size);
+		printf("%s out: %s \n",currentThread->getName(),data);
+		delete [] data;
+	}
+}
 //----------------------------------------------------------------------
 // ThreadTest1
 // 	Set up a ping-pong between two threads, by forking a thread 
@@ -244,6 +277,16 @@ void ThreadTest4()
 	p->Fork(Dllist_producer,0);
 	c->Fork(Dllist_consumer,1);
 }
+
+void ThreadTest5()
+{
+	boundbuffer = new BoundedBuffer(b_maxsize);
+	Thread *p = new Thread("producer");
+	Thread *c = new Thread("consumer");
+
+	p->Fork(BoundBuffer_producer,0);
+	c->Fork(BoundBuffer_consumer,1);
+}
 //----------------------------------------------------------------------
 // ThreadTest
 // 	Invoke a test routine.
@@ -263,6 +306,9 @@ void ThreadTest()
 	break;
 	case 4: // dllist producer consumer, default N=2
 	ThreadTest4();
+	break;
+	case 5: // dllist producer consumer, default b_in_size=2,b_out_size=2,max_size=10
+	ThreadTest5();
 	break;
     default:
 	printf("No test specified.\n");

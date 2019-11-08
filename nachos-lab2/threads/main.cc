@@ -62,6 +62,10 @@ extern int testnum;
 extern int T;
 extern int N;
 extern int E;
+
+extern int b_in_size;
+extern int b_out_size;
+extern int b_maxsize;
 #endif
 
 // External functions used by this file
@@ -115,9 +119,16 @@ int main(int argc, char **argv)
 		E=atoi(argv[1]);
 		argCount++;
 		break;
+	  case 'b':
+	    b_maxsize=atoi(argv[1]);
+		b_in_size=atoi(argv[2]);
+		b_out_size=atoi(argv[3]);
+		argCount+=3;
+		break;
       default:
         testnum = 1;
         break;
+	  
       }
     }
     ThreadTest();
