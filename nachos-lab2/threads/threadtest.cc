@@ -51,14 +51,14 @@ void TestDllist(int which)
 {
 	//printf("*** thread %d ***\n",which);
 	// DEBUG('s', "use lock...\n");
-	sleep_lock->Acquire();
+	// sleep_lock->Acquire();  
 	InsertList(N,list);
 	if(E==1){
 		//1号错误
 		currentThread->Yield();
 	}
 	RemoveList(N,list);
-	sleep_lock->Release();
+	// sleep_lock->Release();
 	//printf("*** thread %d ***\n",which);
 	if(list->IsEmpty())
 	{
