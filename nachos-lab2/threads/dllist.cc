@@ -1,6 +1,6 @@
 
 #include "dllist.h"
-
+extern int E;
 DLLElement::DLLElement(void *itemPtr, int sortKey)
 {
 	//currentThread->Yield();		//error
@@ -161,6 +161,10 @@ void DLList::SortedInsert(void *item, int sortKey)
         }
         else if(find==first)	//在表头插入
         {
+            if(E==4){
+                // 4号错误
+                currentThread->Yield();
+            }
         	//currentThread->Yield();
         	temp->prev=NULL;
         	//currentThread->Yield();
