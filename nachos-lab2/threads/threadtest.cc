@@ -198,7 +198,7 @@ void BoundBuffer_producer(int which)
 			data[i] = Random()%26+'a';
 		}
 		boundbuffer->Write(data,b_in_size);
-		printf("%s in: %s\n",currentThread->getName(),data);
+		
 		delete [] data; 
 	}
 }
@@ -210,7 +210,7 @@ void BoundBuffer_consumer(int which)
 		//consumer
 		char *data = new char[b_out_size+1]();
 		boundbuffer->Read(data,b_out_size);
-		printf("%s out: %s \n",currentThread->getName(),data);
+		
 		delete [] data;
 	}
 }
@@ -307,7 +307,7 @@ void ThreadTest()
 	case 4: // dllist producer consumer, default N=2
 	ThreadTest4();
 	break;
-	case 5: // dllist producer consumer, default b_in_size=2,b_out_size=2,max_size=10
+	case 5: // boundedbuffer producer consumer, default b_in_size=2,b_out_size=2,max_size=10
 	ThreadTest5();
 	break;
     default:

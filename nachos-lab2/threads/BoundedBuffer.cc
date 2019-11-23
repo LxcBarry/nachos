@@ -36,6 +36,7 @@ void BoundedBuffer::Read(void* data, int size)
         usedsize--;
         i++;
     }
+    printf("%s out: %s \n","consumer",data);
     NotFull->Signal(bufferLock);
     bufferLock->Release();
 }
@@ -55,6 +56,7 @@ void BoundedBuffer::Write(void* data, int size)
         usedsize++;
         i++;
     }
+    printf("%s in: %s\n","producer",data);
     // printf("buffer %d \n\n",usedsize);
     NotEmpty->Signal(bufferLock);
     bufferLock->Release();
