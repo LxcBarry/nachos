@@ -1,5 +1,5 @@
 *
-!gnu-decstation-ultrix/
+!gnu-decstation-ultrix
 !gnu-decstation-ultrix/**/
 !gnu-decstation-ultrix/**/*
 !nachos-lab2
