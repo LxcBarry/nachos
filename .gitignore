@@ -1,1 +1,4 @@
-*.o
+*
+!*.h
+!*.cc
+!gnu-decstation-ultrix/
