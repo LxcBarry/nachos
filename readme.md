@@ -24,15 +24,15 @@ sudo apt-get install libgcc1:i386 gcc-4.8-base:i386 libstdc++5:i386
 
 **使用说明**  
 在thread下输入以下命令
-- ./nachos -q 2 -m 2 2 -e 3 
+- ./nachos -q 2 -m 2 2 -e 3   
 演示双向链表缺少互斥机制的情况(需要注释掉threadtest.cc下的ThreadTest2的sleep_lock) -m后命令为T N,-e后参数为错误类型(最多为4,0为无错误)  
-- ./nachos -q 3 
+- ./nachos -q 3   
 table表的生产者消费者模型演示
 
-- ./nachos -q 4
+- ./nachos -q 4  
 dllist的生产者消费者模型演示
 
-- ./nachos -q 5 
+- ./nachos -q 5   
 boundedbuffer的生产者消费者模型演示  
 (加-rs命令可以随机切换线程,加-b max_size b_in_size b_out_size，控制buffer区大小和每次读入大小，读出大小)  
 
