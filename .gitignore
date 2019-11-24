@@ -1,4 +1,14 @@
 *
-!*.h
-!*.cc
 !gnu-decstation-ultrix/
+!gnu-decstation-ultrix/**/
+!gnu-decstation-ultrix/**/*
+!nachos-lab2
+!nachos-lab2/**/
+!nachos-lab2/**/*.h
+!nachos-lab2/**/*.cc
+!nachos-lab2/**/Makefile
+!nachos-lab2/**/Makefile.common
+!nachos-lab2/**/Makefile.dep
+!*.md
+!*.jpg
+!.gitignore
