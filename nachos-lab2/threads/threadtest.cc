@@ -13,6 +13,7 @@
 #include "system.h"
 #include "dllist.h"
 #include "synch-sleep.h"
+#include "Table.h"
 // #include "synch-sem.h"
 
 // testnum is set in main.cc
@@ -24,6 +25,21 @@ DLList *	list;
 
 // sleep lock
 Lock * sleep_lock;
+
+// table
+#define TABLESIZE 10
+Table * table;
+Semaphore * t_buf;
+Semaphore * t_msg;
+
+// dllist(problem of produser and consumer)
+// monitor
+Condition * d_notFull;
+Condition * d_notEmpty;
+int count;
+Lock * d_mutex;
+// still use list
+// still use N (as buffer max space)
 
 
 void InsertList(int N, DLList *list);
@@ -51,7 +67,7 @@ void TestDllist(int which)
 {
 	//printf("*** thread %d ***\n",which);
 	// DEBUG('s', "use lock...\n");
-	sleep_lock->Acquire();
+	sleep_lock->Acquire();  
 	InsertList(N,list);
 	if(E==1){
 		//1号错误
@@ -71,6 +87,98 @@ void TestDllist(int which)
 }
 
 
+// TableProducer
+void Table_producer(int which)
+{
+
+	while (true)
+	{
+		void *item;
+		int key = Random() % 100;		
+		int *items = new int;
+		items[0] = key;
+		item = items;		
+		t_buf->P();
+		int index =table->Alloc(item);
+		printf("%s in:%d %d\n", currentThread->getName(), index, *(int*)item);
+		t_msg->V();
+		//currentThread->Yield();
+	}
+
+}
+
+// TableConsumer
+void Table_consumer(int which)
+{
+	void* item;
+	while(true)
+	{
+		int index=0;
+		//查找一个可用的表内容
+
+		t_msg->P();
+		for(;index < TABLESIZE;index++)
+		{
+			item = table->Get(index);
+			if(item){
+				break;
+			}
+		}
+		printf("%s out:%d %d\n",currentThread->getName(), index, *(int*)item);
+		table->Release(index);
+		t_buf->V();
+	}
+}
+
+// DllistProducer
+void Dllist_producer(int which)
+{
+
+	while (TRUE)
+	{
+		// produce
+		int *item = new int;
+		int key = Random() % 100;
+		*item = -key;
+		d_mutex->Acquire();
+		while(count>=N)
+		{
+			printf("wait notfull...\n");
+			d_notFull->Wait(d_mutex);
+		}
+		list->SortedInsert((void*)item,key);
+		printf("%s in %d %d\n",currentThread->getName(),key,*item);
+		count++;
+		printf("list: ");
+		list->show();
+		d_notEmpty->Signal(d_mutex);
+		d_mutex->Release();
+	}
+	
+}
+
+void Dllist_consumer(int which)
+{
+	while(TRUE)
+	{
+		
+		int key;
+		int *item;
+		d_mutex->Acquire();
+		while(count==0){
+			printf("wait notempty...\n");
+			d_notEmpty->Wait(d_mutex);
+		}
+		// take;
+		item = (int*)list->Remove(&key);
+		count--;
+		d_notFull->Signal(d_mutex);
+		d_mutex->Release();
+		printf("%s out %d %d\n",currentThread->getName(),key,*item);
+		printf("\nlist: ");
+		list->show();
+	}
+}
 
 
 //----------------------------------------------------------------------
@@ -108,11 +216,34 @@ void ThreadTest2()
 		Thread *test = new Thread(name);
 		test->Fork(TestDllist,var);//read to run this,and set the params for this procedure
 	}
+}
 
-	
+void ThreadTest3()
+{
+	DEBUG('t',"Entering ThreadTest3\n");
+	table=new Table(TABLESIZE);
+	t_buf = new Semaphore("table space",TABLESIZE);
+	t_msg = new Semaphore("table have msg",0);
+	Thread *p = new Thread("producer");
+	p->Fork(Table_producer,0);
+	Thread *c = new Thread("consumer");
+	c->Fork(Table_consumer,1);
 
 }
 
+void ThreadTest4()
+{
+	list = new DLList;
+	d_mutex = new Lock("dllist mutex");
+	d_notEmpty=new Condition("dllist notEmpty");
+	d_notFull = new Condition("dllist notFull");
+	count=0;
+	
+	Thread * p = new Thread("dllist producer");
+	Thread * c = new Thread("dllist consumer");
+	p->Fork(Dllist_producer,0);
+	c->Fork(Dllist_consumer,1);
+}
 //----------------------------------------------------------------------
 // ThreadTest
 // 	Invoke a test routine.
@@ -121,12 +252,18 @@ void ThreadTest2()
 void ThreadTest()
 {
     switch (testnum) {
-    case 1:
+    case 1: // simpleThread
 	ThreadTest1();
 	break;
-    case 2:
+    case 2: // lab1 mutex ,default N=2 ,T=2
     ThreadTest2();
     break;
+	case 3: // table producer consumer,tablesize=10
+	ThreadTest3();
+	break;
+	case 4: // dllist producer consumer, default N=2
+	ThreadTest4();
+	break;
     default:
 	printf("No test specified.\n");
 	break;
