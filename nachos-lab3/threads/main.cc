@@ -66,6 +66,10 @@ extern int E;
 extern int b_in_size;
 extern int b_out_size;
 extern int b_maxsize;
+
+//alarm test
+extern int alarm_T;
+extern int alarm_time_list[10];
 #endif
 
 // External functions used by this file
@@ -120,10 +124,18 @@ int main(int argc, char **argv)
 		argCount++;
 		break;
 	  case 'b':
-	    b_maxsize=atoi(argv[1]);
-		b_in_size=atoi(argv[2]);
-		b_out_size=atoi(argv[3]);
+	    b_maxsize = atoi(argv[1]);
+		b_in_size = atoi(argv[2]);
+		b_out_size = atoi(argv[3]);
 		argCount+=3;
+		break;
+	  case 'a':
+	    alarm_T = atoi(argv[1]);
+		for(int i = 2; i <= alarm_T+1; i++)
+		{
+			alarm_time_list[i-2] = atoi(argv[i]);
+		}
+		argCount+=alarm_T + 1;
 		break;
       default:
         testnum = 1;
