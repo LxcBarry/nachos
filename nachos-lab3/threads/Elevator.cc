@@ -7,7 +7,7 @@ Elevator::Elevator(char *debugName, int m_numFloors, int m_ID)
     currentFloor = 0;                   //电梯一开始永远在第0层，且向上开
     occupancy = 0;              
     upOrDown = UP;
-    alarm = new Alarm();
+    // alarm = new Alarm();
     PtrFloorBarriers_Up = new EventBarrier*[numFloors];   //每一层都有一个up_in事件栅栏
     PtrFloorBarriers_Down = new EventBarrier*[numFloors];   //每一层都有一个up_down事件栅栏
     PtrFloorBarriers_Out = new EventBarrier*[numFloors];   //每一层都有一个out事件栅栏
@@ -49,7 +49,7 @@ void Elevator::Move()
 	for(int i = currentFloor;i < numFloors;i++)
         {
             printf("----Elevator %d has arrived floor %d up----\n",ID,i);
-            alarm->Pause(10);
+            // alarm->Pause(10);
             if((floorToStop_Up[i] == true)||(floorToStop_Out[i] == true))
                 {
             currentFloor = i;
@@ -67,7 +67,7 @@ void Elevator::Move()
 	for(int i = currentFloor;i > 0;i--)
         {
             printf("----Elevator %d has arrived floor %d down----\n",ID,i);
-            alarm->Pause(10);
+            // alarm->Pause(10);
             if((floorToStop_Down[i] == true)||(floorToStop_Out[i] == true))
                 {
             //alarm->Pause(10);

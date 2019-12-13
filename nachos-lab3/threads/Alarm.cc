@@ -1,34 +1,32 @@
 #include "Alarm.h"
 #include "system.h"
 #include "copyright.h"
+void check(int waiters)
+{
+    //防止当只有一个进程时系统终止
+    // currentThread->Yield();
+	while (waiters!=0)
+	{
+		currentThread->Yield();
+	}
+	currentThread->Finish();
+}
 
 static void AlarmHandler(int arg) 
 {
-     Alarm *p = (Alarm *)arg; 
+    Alarm *p = (Alarm *)arg; 
     p->Call(); 
 } 
 Alarm::Alarm()
 {
     queue = new List();
     waiters = 0;
-    // loop_thread = new Thread("loop_thread");
     
 }
 
 Alarm::~Alarm()
 {
     delete queue;
-}
-void check(int which)
-{
-    //防止当只有一个进程时系统终止
-    // currentThread->Yield();
-    
-	while (which!=0)
-	{
-		currentThread->Yield();
-	}
-	currentThread->Finish();
 }
 
 void Alarm::Pause(int how_long)
@@ -43,19 +41,21 @@ void Alarm::Pause(int how_long)
     {
         // printf("*\n");
         // 用于防止系统终止
+        // 当队列为空时，结束进程，队列只有一个进程时,防止系统终止
         Thread *loop_thread= new Thread("loop thread");
         loop_thread->Fork(check,waiters);
     }
-    
+    //TimerTicks=100,这个是howlong的单位，定义在machine/stat.h
     int Ticks = TimerTicks * how_long;
-    // int Ticks = how_long;
-    // queue->SortedInsert((void*)currentThread,stats->totalTicks+Ticks);//按时序有序插入
+    //把wake up时刻插入
     queue->SortedInsert((void*)currentThread,stats->totalTicks  +Ticks);//按时序有序插入
     // char msg[60];
     sprintf(msg,"Alarm: now time is %d thread %s will wake up when time is %d \n",stats->totalTicks,
                                                                                     currentThread->getName(),
                                                                                     stats->totalTicks+Ticks);
     DEBUG('w', msg);
+
+    //指定多少时刻后发生中断
     interrupt->Schedule(AlarmHandler,(int)this,Ticks,TimerInt);
     currentThread->Sleep();
     (void)interrupt->SetLevel(oldLevel);
@@ -63,6 +63,8 @@ void Alarm::Pause(int how_long)
 
 void Alarm::Call()
 {
+    //中断时调用的函数
+    //查看当前已经到达wakeup时间的进程，将它调入就绪队列
     int when;
     IntStatus oldLevel = interrupt->SetLevel(IntOff); 
     DEBUG('w',"calling...\n");
@@ -83,9 +85,7 @@ void Alarm::Call()
         }
         else
         {
-            // waiters++;
             queue->SortedInsert((void*)t,when);
-            // interrupt->Schedule(AlarmHandler,(int)this,when,TimerInt); //指定时刻发生中断
             break;
         }
 
